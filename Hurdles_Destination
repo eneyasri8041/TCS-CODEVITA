@@ -1,0 +1,71 @@
+
+import java.util.Scanner;
+
+public class RouteFinder {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int n = scanner.nextInt();
+        char[][] matrix = new char[n][n];
+
+     
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                matrix[i][j] = scanner.next().charAt(0);
+            }
+        }
+
+        int destX = -1;
+        int destY = -1;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (matrix[i][j] == 'D') {
+                    destX = i;
+                    destY = j;
+                }
+            }
+        }
+
+        int[][] directions = {{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
+        boolean[][] visited = new boolean[n][n];
+        findRoute(matrix, 0, 0, destX, destY, visited, directions);
+    }
+
+    private static void findRoute(char[][] matrix, int x, int y, int destX, int destY, boolean[][] visited, int[][] directions) {
+        if (x == destX && y == destY) {
+            System.out.println("DESTINATION");
+            return;
+        }
+
+        visited[x][y] = true;
+        System.out.print("R ");
+
+        // Print surrounding hurdles
+        StringBuilder hurdles = new StringBuilder();
+        for (int[] direction : directions) {
+            int newX = x + direction[0];
+            int newY = y + direction[1];
+            if (newX >= 0 && newX < matrix.length && newY >= 0 && newY < matrix[0].length) {
+                char hurdle = matrix[newX][newY];
+                if (hurdle == 'S' || hurdle == 'L' || hurdle == 'W' || hurdle == 'T') {
+                    hurdles.append(hurdle).append(" ");
+                }
+            }
+        }
+
+        if (hurdles.length() == 0) {
+            System.out.println("NO HURDLES");
+        } else {
+            System.out.println(hurdles.toString().trim());
+        }
+
+       
+        for (int[] direction : directions) {
+            int newX = x + direction[0];
+            int newY = y + direction[1];
+            if (newX >= 0 && newX < matrix.length && newY >= 0 && newY < matrix[0].length && !visited[newX][newY] && matrix[newX][newY] != 'L') {
+                findRoute(matrix, newX, newY, destX, destY, visited, directions);
+            }
+        }
+    }
+}
+
